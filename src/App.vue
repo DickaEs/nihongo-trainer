@@ -294,7 +294,7 @@ function finishKana() {
         <nav class="landing-nav">
             <button class="brand-mark as-link" type="button" @click="go('landing')">
                 <span>日</span>
-                <strong>Nihongo Trainerrrr</strong>
+                <strong>Nihongo Trainer</strong>
             </button>
             <div class="landing-links">
                 <a href="#fitur">Fitur</a>
