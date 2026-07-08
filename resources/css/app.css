@@ -31,6 +31,13 @@ a {
     text-decoration: none;
 }
 
+.as-link {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+}
+
 button,
 input {
     font: inherit;
@@ -547,6 +554,7 @@ input:focus {
 }
 
 .landing-nav a:not(.brand-mark),
+.landing-nav button:not(.brand-mark),
 .nav-cta,
 .primary-link,
 .secondary-link {
@@ -559,11 +567,13 @@ input:focus {
     font-weight: 800;
 }
 
-.landing-links a:not(.nav-cta) {
+.landing-links a:not(.nav-cta),
+.landing-links button:not(.nav-cta) {
     color: #4f5f68;
 }
 
-.landing-links a:not(.nav-cta):hover {
+.landing-links a:not(.nav-cta):hover,
+.landing-links button:not(.nav-cta):hover {
     background: var(--sky);
     color: var(--navy);
 }
@@ -580,7 +590,8 @@ input:focus {
 }
 
 .secondary-link,
-.landing-nav a:not(.brand-mark):not(.nav-cta) {
+.landing-nav a:not(.brand-mark):not(.nav-cta),
+.landing-nav button:not(.brand-mark):not(.nav-cta) {
     border: 1px solid transparent;
     background: transparent;
 }
@@ -948,13 +959,15 @@ input:focus {
     color: #d7d7d7;
 }
 
-.landing-footer a {
+.landing-footer a,
+.landing-footer button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 40px;
     padding: 0 14px;
     border-radius: 7px;
+    border: 0;
     background: #fff;
     color: var(--ink);
     font-weight: 900;
@@ -1040,6 +1053,7 @@ input:focus {
     border-radius: 8px;
     background: linear-gradient(135deg, #fff6e1 0%, #f5d8b0 54%, #c76858 100%);
     box-shadow: 0 22px 60px rgba(63, 43, 31, .18);
+    text-align: left;
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
