@@ -4,15 +4,20 @@ import { defaultKotoba, kanaSets } from './data';
 
 const storageKey = 'nihongo-trainer-custom-kotoba';
 const scoreKey = 'nihongo-trainer-last-score';
+const preferencesKey = 'nihongo-trainer-preferences';
 const routes = ['landing', 'materi', 'latihan', 'kana', 'hiragana', 'katakana'];
+const savedPreferences = loadJson(preferencesKey, {});
 
 const page = ref('landing');
 const customWords = ref(loadCustomWords());
 const form = reactive({ romaji: '', kana: '', kanji: '', meaning: '' });
 const formNote = ref('');
 const shuffledPreview = ref(false);
-const quizMode = ref('jp-id');
-const quizCount = ref('all');
+const quizMode = ref(savedPreferences.quizMode ?? 'jp-id');
+const quizCount = ref(savedPreferences.quizCount ?? 'all');
+const customQuizCount = ref(Number(savedPreferences.customQuizCount ?? 5));
+const theme = ref(savedPreferences.theme ?? 'light');
+const settingsOpen = ref(false);
 const quiz = reactive({ items: [], current: 0, options: [], answers: [], locked: false, finished: false });
 const lastScore = ref(loadJson(scoreKey, null));
 const kanaState = reactive({
@@ -28,6 +33,7 @@ const kanaState = reactive({
 let timer = null;
 
 const words = computed(() => [...defaultKotoba, ...customWords.value].sort((a, b) => a.romaji.localeCompare(b.romaji)));
+const maxQuizCount = computed(() => Math.max(1, words.value.length));
 const visibleWords = computed(() => (shuffledPreview.value ? shuffle(words.value) : words.value));
 const currentQuestion = computed(() => quiz.items[quiz.current]);
 const quizCorrect = computed(() => quiz.answers.filter((answer) => answer.correct).length);
@@ -56,9 +62,15 @@ watch(page, (value) => {
     }
 });
 
+watch([quizMode, quizCount, customQuizCount, theme], savePreferences);
+watch(words, () => {
+    customQuizCount.value = clampQuizCount(customQuizCount.value);
+});
+
 onMounted(() => {
     const hashPage = window.location.hash.replace('#', '');
     if (routes.includes(hashPage)) page.value = hashPage;
+    applyTheme();
     window.addEventListener('hashchange', syncRoute);
 });
 
@@ -91,6 +103,61 @@ function loadCustomWords() {
 
 function saveCustomWords() {
     localStorage.setItem(storageKey, JSON.stringify(customWords.value));
+}
+
+function savePreferences() {
+    localStorage.setItem(preferencesKey, JSON.stringify({
+        quizMode: quizMode.value,
+        quizCount: quizCount.value,
+        customQuizCount: customQuizCount.value,
+        theme: theme.value,
+    }));
+    applyTheme();
+}
+
+function applyTheme() {
+    document.body.classList.toggle('theme-dark', theme.value === 'dark');
+}
+
+function toggleTheme() {
+    theme.value = theme.value === 'dark' ? 'light' : 'dark';
+}
+
+function setQuizMode(value) {
+    quizMode.value = value;
+}
+
+function setQuizCount(value) {
+    quizCount.value = value;
+    customQuizCount.value = clampQuizCount(customQuizCount.value);
+}
+
+function clampQuizCount(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return 1;
+    return Math.min(Math.max(1, Math.floor(parsed)), maxQuizCount.value);
+}
+
+function setCustomQuizCount(value) {
+    customQuizCount.value = clampQuizCount(value);
+    quizCount.value = 'custom';
+}
+
+function resolvedQuizCount() {
+    if (quizCount.value === 'all') return words.value.length;
+    if (quizCount.value === 'custom') return clampQuizCount(customQuizCount.value);
+    return Number(quizCount.value);
+}
+
+function resetCustomWords() {
+    customWords.value = [];
+    localStorage.removeItem(storageKey);
+    formNote.value = 'Kotoba tambahan sudah direset.';
+}
+
+function resetLastScore() {
+    lastScore.value = null;
+    localStorage.removeItem(scoreKey);
 }
 
 function addKotoba() {
@@ -173,7 +240,7 @@ function makeOptions(word) {
 function startQuiz() {
     if (words.value.length < 2) return;
 
-    const requested = quizCount.value === 'all' ? words.value.length : Number(quizCount.value);
+    const requested = resolvedQuizCount();
     quiz.items = shuffle(words.value).slice(0, Math.min(requested, words.value.length));
     quiz.current = 0;
     quiz.answers = [];
@@ -281,6 +348,21 @@ function checkKana(index) {
     nextTick(() => document.querySelector('.kana-card.is-active input')?.focus());
 }
 
+function handleKanaInput(index) {
+    const item = kanaState.items[index];
+    if (!item || item.done) return;
+
+    startTimer();
+
+    const answer = item.value.trim().toLowerCase();
+    const accepted = answerAliases[item.answer] ?? [item.answer];
+    const longestAccepted = Math.max(...accepted.map((value) => value.length));
+
+    if (accepted.includes(answer) || answer.length >= longestAccepted) {
+        checkKana(index);
+    }
+}
+
 function finishKana() {
     if (!kanaState.finishedAt) kanaState.finishedAt = Date.now();
     stopTimer();
@@ -296,10 +378,50 @@ function finishKana() {
                 <span>日</span>
             </button>
             <div class="home-top-actions">
-                <button type="button" aria-label="Pengaturan">⚙</button>
-                <button type="button" aria-label="Tema">☀</button>
+                <button type="button" aria-label="Pengaturan belajar" @click="settingsOpen = true">⚙</button>
+                <button type="button" :aria-label="theme === 'dark' ? 'Pakai tema terang' : 'Pakai tema malam'" @click="toggleTheme">{{ theme === 'dark' ? '☾' : '☀' }}</button>
             </div>
         </nav>
+
+        <div v-if="settingsOpen" class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <button class="settings-backdrop" type="button" aria-label="Tutup pengaturan" @click="settingsOpen = false"></button>
+            <section class="settings-panel">
+                <div class="settings-head">
+                    <div>
+                        <p class="eyebrow">Pengaturan</p>
+                        <h2 id="settings-title">Belajar harian</h2>
+                    </div>
+                    <button class="settings-close" type="button" aria-label="Tutup pengaturan" @click="settingsOpen = false">x</button>
+                </div>
+
+                <div class="settings-group">
+                    <strong>Arah quiz default</strong>
+                    <div class="segmented">
+                        <button type="button" :class="{ 'is-active': quizMode === 'jp-id' }" @click="setQuizMode('jp-id')">Jepang - Indonesia</button>
+                        <button type="button" :class="{ 'is-active': quizMode === 'id-jp' }" @click="setQuizMode('id-jp')">Indonesia - Jepang</button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <strong>Jumlah soal default</strong>
+                    <div class="count-grid">
+                        <button v-for="count in ['5', '10', 'all', 'custom']" :key="`setting-${count}`" type="button" :class="{ 'is-active': quizCount === count }" @click="setQuizCount(count)">
+                            {{ count === 'all' ? 'Semua' : count }}
+                        </button>
+                    </div>
+                    <label class="custom-count-field">
+                        <span>Custom soal</span>
+                        <input :value="customQuizCount" type="number" min="1" :max="maxQuizCount" inputmode="numeric" @input="setCustomQuizCount($event.target.value)" />
+                        <small>Maksimum {{ maxQuizCount }} soal.</small>
+                    </label>
+                </div>
+
+                <div class="settings-actions">
+                    <button class="ghost-button" type="button" @click="resetLastScore">Reset skor</button>
+                    <button class="ghost-button danger" type="button" @click="resetCustomWords">Reset kotoba tambahan</button>
+                </div>
+            </section>
+        </div>
 
         <section class="home-hero-card">
             <div>
@@ -467,15 +589,20 @@ function finishKana() {
                     <div class="control-group">
                         <span>Arah soal</span>
                         <div class="segmented" role="group" aria-label="Mode latihan">
-                            <button type="button" :class="{ 'is-active': quizMode === 'jp-id' }" @click="quizMode = 'jp-id'">Jepang - Indonesia</button>
-                            <button type="button" :class="{ 'is-active': quizMode === 'id-jp' }" @click="quizMode = 'id-jp'">Indonesia - Jepang</button>
+                            <button type="button" :class="{ 'is-active': quizMode === 'jp-id' }" @click="setQuizMode('jp-id')">Jepang - Indonesia</button>
+                            <button type="button" :class="{ 'is-active': quizMode === 'id-jp' }" @click="setQuizMode('id-jp')">Indonesia - Jepang</button>
                         </div>
                     </div>
                     <div class="control-group">
                         <span>Jumlah</span>
                         <div class="count-grid" role="group" aria-label="Jumlah soal">
-                            <button v-for="count in ['5', '10', 'all']" :key="count" type="button" :class="{ 'is-active': quizCount === count }" @click="quizCount = count">{{ count === 'all' ? 'Semua' : count }}</button>
+                            <button v-for="count in ['5', '10', 'all', 'custom']" :key="count" type="button" :class="{ 'is-active': quizCount === count }" @click="setQuizCount(count)">{{ count === 'all' ? 'Semua' : count }}</button>
                         </div>
+                        <label class="custom-count-field compact" v-if="quizCount === 'custom'">
+                            <span>Jumlah custom</span>
+                            <input :value="customQuizCount" type="number" min="1" :max="maxQuizCount" inputmode="numeric" @input="setCustomQuizCount($event.target.value)" />
+                            <small>Maksimum {{ maxQuizCount }} kotoba.</small>
+                        </label>
                     </div>
                     <button class="primary-button wide" type="button" @click="startQuiz">Mulai latihan</button>
                     <p v-if="lastScore" class="last-score">Terakhir: {{ lastScore.correct }}/{{ lastScore.total }} benar</p>
@@ -604,7 +731,7 @@ function finishKana() {
         <section class="kana-grid" :aria-label="`Latihan ${kanaState.script}`">
             <article v-for="(item, index) in kanaState.items" :key="`${item.kana}-${index}`" class="kana-card" :class="{ 'is-active': index === kanaState.current && !item.done, 'is-correct': item.done, 'is-wrong': item.hadWrong && !item.done }">
                 <strong>{{ item.kana }}</strong>
-                <input v-model="item.value" autocomplete="off" autocapitalize="none" spellcheck="false" :aria-label="`Jawaban untuk ${item.kana}`" :disabled="item.done" @input="startTimer" @keydown.enter.prevent="checkKana(index)" />
+                <input v-model="item.value" autocomplete="off" autocapitalize="none" spellcheck="false" :aria-label="`Jawaban untuk ${item.kana}`" :disabled="item.done" @input="handleKanaInput(index)" @keydown.enter.prevent="checkKana(index)" />
             </article>
         </section>
 
