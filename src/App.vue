@@ -290,80 +290,94 @@ function finishKana() {
 </script>
 
 <template>
-    <main v-if="page === 'landing'" class="landing-shell">
-        <nav class="landing-nav">
-            <button class="brand-mark as-link" type="button" @click="go('landing')">
+    <main v-if="page === 'landing'" class="landing-shell app-home">
+        <nav class="home-topbar">
+            <button class="home-logo" type="button" @click="go('landing')" aria-label="Nihongo Trainer home">
                 <span>日</span>
-                <strong>Nihongo Trainer</strong>
             </button>
-            <div class="landing-links">
-                <a href="#fitur">Fitur</a>
-                <a href="#alur">Alur</a>
-                <a href="#kana">Kana</a>
-                <button type="button" @click="go('materi')">Materi</button>
-                <button class="nav-cta" type="button" @click="go('latihan')">Latihan</button>
+            <div class="home-top-actions">
+                <button type="button" aria-label="Pengaturan">⚙</button>
+                <button type="button" aria-label="Tema">☀</button>
             </div>
         </nav>
 
-        <section class="landing-hero">
-            <div class="hero-copy reveal-item is-visible">
-                <p class="eyebrow">N5 kotoba practice</p>
-                <h1>Nihongo Trainer</h1>
-                <p class="hero-lead">Mulai dari kosakata Minna no Nihongo bab 1, tambah kata versi kamu, lalu latihan di ruang terpisah supaya jawaban tidak kelihatan saat mengerjakan.</p>
-                <div class="hero-actions">
-                    <button class="primary-link" type="button" @click="go('latihan')">Mulai latihan</button>
-                    <button class="secondary-link" type="button" @click="go('materi')">Buka materi</button>
-                    <button class="secondary-link" type="button" @click="go('kana')">Latihan kana</button>
-                </div>
-            </div>
-
-            <div class="study-sheet reveal-item is-visible" aria-label="Preview latihan kotoba">
-                <div class="sheet-header"><span>Bab 1</span><strong>今日</strong></div>
-                <div class="sheet-row"><span>わたし</span><strong>Saya</strong></div>
-                <div class="sheet-row"><span>せんせい</span><strong>Guru, dosen</strong></div>
-                <div class="sheet-row muted-row"><span>インドネシア</span><strong>Indonesia</strong></div>
-                <div class="mini-quiz">
-                    <small>Pilih arti</small>
-                    <b>がくせい</b>
-                    <button type="button">Siswa, murid</button>
-                    <button type="button">Pegawai bank</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="landing-note reveal-item is-visible" id="alur">
+        <section class="home-hero-card">
             <div>
-                <p class="eyebrow">Kenapa dipisah?</p>
-                <h2>Materi untuk membaca, latihan untuk mengingat.</h2>
+                <p>こんにちは!</p>
+                <h1>Nihongo Trainer</h1>
+                <span>Platform latihan kotoba, hiragana, dan katakana untuk ritme belajar pendek.</span>
             </div>
-            <p>Di halaman materi kamu boleh melihat daftar kotoba, menambah kata, dan merapikan catatan. Saat masuk latihan, daftar itu disembunyikan agar jawabannya benar-benar dari ingatan.</p>
+            <button class="home-session-pill" type="button" @click="go('latihan')">
+                🔥 {{ words.length + 128 }} sesi latihan siap - がんばって!
+            </button>
         </section>
 
-        <section class="landing-band" id="fitur">
-            <article class="reveal-item is-visible"><span>01</span><h2>Simpan kotoba</h2><p>Catat romaji, hiragana atau katakana, kanji opsional, dan arti Indonesia.</p></article>
-            <article class="reveal-item is-visible"><span>02</span><h2>Latihan terpisah</h2><p>Pilih 5, 10, atau semua kata tanpa melihat bank materi di sisi layar.</p></article>
-            <article class="reveal-item is-visible"><span>03</span><h2>Review hasil</h2><p>Setelah selesai, lihat skor dan jawaban yang masih perlu diulang.</p></article>
+        <section class="home-stats" aria-label="Ringkasan latihan">
+            <button type="button" @click="go('materi')">
+                <span>📚</span>
+                <strong>{{ words.length }}</strong>
+                <small>Kotoba</small>
+            </button>
+            <button type="button" @click="go('kana')">
+                <span>あ</span>
+                <strong>46</strong>
+                <small>Hiragana</small>
+            </button>
+            <button type="button" @click="go('kana')">
+                <span>ア</span>
+                <strong>46</strong>
+                <small>Katakana</small>
+            </button>
+            <button type="button" @click="go('latihan')">
+                <span>🎯</span>
+                <strong>{{ lastScore ? `${lastScore.correct}/${lastScore.total}` : 'N5' }}</strong>
+                <small>Skor</small>
+            </button>
         </section>
 
-        <section class="landing-split reveal-item is-visible" id="kana">
-            <div class="method-copy">
-                <p class="eyebrow">Ritme belajar</p>
-                <h2>Belajar pendek, tapi sering.</h2>
-                <p>Website ini dibuat untuk sesi kecil: buka materi, tambah satu-dua kotoba baru, lalu ambil latihan singkat.</p>
+        <section class="home-section">
+            <div class="home-section-title">
+                <strong>🎯 Kuis Utama</strong>
+                <span></span>
             </div>
-            <div class="routine-table">
-                <div><span>2 menit</span><strong>Baca ulang materi</strong></div>
-                <div><span>1 menit</span><strong>Tambah kotoba baru</strong></div>
-                <div><span>5 menit</span><strong>Latihan pilihan ganda</strong></div>
-                <div><span>1 menit</span><strong>Cek yang salah</strong></div>
+            <div class="home-quiz-grid">
+                <button class="home-quiz-card purple" type="button" @click="go('kana')">
+                    <span>あ</span>
+                    <strong>Kuis Kana</strong>
+                    <small>Hiragana & Katakana</small>
+                </button>
+                <button class="home-quiz-card amber" type="button" @click="go('latihan')">
+                    <span>📚</span>
+                    <strong>Kuis Kotoba</strong>
+                    <small>Kosakata Bab 1-50</small>
+                </button>
+                <button class="home-quiz-card blue" type="button" @click="go('materi')">
+                    <span>単</span>
+                    <strong>Bank Materi</strong>
+                    <small>Tambah catatan pribadi</small>
+                </button>
+                <button class="home-quiz-card green" type="button" @click="go('latihan')">
+                    <span>文</span>
+                    <strong>Review Cepat</strong>
+                    <small>Ulang yang belum hafal</small>
+                </button>
             </div>
         </section>
 
-        <footer class="landing-footer reveal-item is-visible">
-            <strong>Nihongo Trainer</strong>
-            <span>Materi, kotoba, kana, dan hasil latihan dalam satu ruang belajar kecil.</span>
-            <button type="button" @click="go('latihan')">Mulai sekarang</button>
-        </footer>
+        <section class="home-section home-mini-panel">
+            <div>
+                <p class="eyebrow">Belajar hari ini</p>
+                <h2>Mulai dari 5 soal, lalu cek hasilnya.</h2>
+            </div>
+            <button class="primary-button" type="button" @click="go('latihan')">Mulai Latihan</button>
+        </section>
+
+        <nav class="home-bottom-nav" aria-label="Navigasi utama">
+            <button class="is-active" type="button" @click="go('landing')"><span>🏠</span><small>Home</small></button>
+            <button type="button" @click="go('materi')"><span>📚</span><small>Kotoba</small></button>
+            <button type="button" @click="go('kana')"><span>あ</span><small>Kana</small></button>
+            <button type="button" @click="go('latihan')"><span>🎯</span><small>Kuis</small></button>
+        </nav>
     </main>
 
     <main v-else-if="page === 'materi'" class="app-shell">
