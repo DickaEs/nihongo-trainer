@@ -1558,6 +1558,73 @@ input:focus {
     grid-row: auto;
 }
 
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid #ded7ca;
+    border-radius: 8px;
+    background: rgba(255, 248, 230, .55);
+}
+
+.toggle-row span {
+    display: grid;
+    gap: 4px;
+}
+
+.toggle-row b {
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.toggle-row small {
+    color: var(--muted);
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.toggle-row input {
+    position: relative;
+    width: 52px;
+    min-width: 52px;
+    height: 30px;
+    min-height: 30px;
+    padding: 0;
+    border: 1px solid #c8beb0;
+    border-radius: 999px;
+    appearance: none;
+    background: #e9e1d4;
+    cursor: pointer;
+}
+
+.toggle-row input::before {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, .16);
+    content: "";
+    transition: transform .16s ease;
+}
+
+.toggle-row input:checked {
+    border-color: var(--blue);
+    background: var(--blue);
+}
+
+.toggle-row input:checked::before {
+    transform: translateX(22px);
+}
+
+.toggle-row.compact {
+    align-items: center;
+}
+
 .ghost-button.danger {
     border-color: #e2b6b6;
     color: var(--red);
@@ -1655,7 +1722,9 @@ body.theme-dark .home-quiz-card.blue,
 body.theme-dark .home-quiz-card.green,
 body.theme-dark .kana-wrong-list,
 body.theme-dark .review-item,
-body.theme-dark .prompt {
+body.theme-dark .prompt,
+body.theme-dark .custom-count-field,
+body.theme-dark .toggle-row {
     border-color: var(--line);
     background: #151922;
     color: var(--ink);

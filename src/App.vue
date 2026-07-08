@@ -16,6 +16,7 @@ const shuffledPreview = ref(false);
 const quizMode = ref(savedPreferences.quizMode ?? 'jp-id');
 const quizCount = ref(savedPreferences.quizCount ?? 'all');
 const customQuizCount = ref(Number(savedPreferences.customQuizCount ?? 5));
+const showRomaji = ref(savedPreferences.showRomaji ?? true);
 const theme = ref(savedPreferences.theme ?? 'light');
 const settingsOpen = ref(false);
 const quiz = reactive({ items: [], current: 0, options: [], answers: [], locked: false, finished: false });
@@ -62,7 +63,7 @@ watch(page, (value) => {
     }
 });
 
-watch([quizMode, quizCount, customQuizCount, theme], savePreferences);
+watch([quizMode, quizCount, customQuizCount, showRomaji, theme], savePreferences);
 watch(words, () => {
     customQuizCount.value = clampQuizCount(customQuizCount.value);
 });
@@ -110,6 +111,7 @@ function savePreferences() {
         quizMode: quizMode.value,
         quizCount: quizCount.value,
         customQuizCount: customQuizCount.value,
+        showRomaji: showRomaji.value,
         theme: theme.value,
     }));
     applyTheme();
@@ -141,6 +143,10 @@ function clampQuizCount(value) {
 function setCustomQuizCount(value) {
     customQuizCount.value = clampQuizCount(value);
     quizCount.value = 'custom';
+}
+
+function toggleRomaji() {
+    showRomaji.value = !showRomaji.value;
 }
 
 function resolvedQuizCount() {
@@ -200,7 +206,7 @@ function promptParts(word) {
         return {
             label: 'Pilih arti Indonesia',
             main: word.kana,
-            sub: [word.romaji, word.kanji].filter(Boolean).join(' / '),
+            sub: [showRomaji.value ? word.romaji : '', word.kanji].filter(Boolean).join(' / '),
         };
     }
 
@@ -208,7 +214,7 @@ function promptParts(word) {
 }
 
 function optionLabel(word) {
-    return quizMode.value === 'jp-id' ? word.meaning : [word.kana, word.romaji].filter(Boolean).join(' / ');
+    return quizMode.value === 'jp-id' ? word.meaning : [word.kana, showRomaji.value ? word.romaji : ''].filter(Boolean).join(' / ');
 }
 
 function similarityScore(source, candidate) {
@@ -416,6 +422,17 @@ function finishKana() {
                     </label>
                 </div>
 
+                <div class="settings-group">
+                    <strong>Bantuan bacaan</strong>
+                    <label class="toggle-row">
+                        <span>
+                            <b>Tampilkan romaji</b>
+                            <small>Jika mati, quiz hanya menampilkan kana/kanji tanpa latin.</small>
+                        </span>
+                        <input type="checkbox" :checked="showRomaji" @change="toggleRomaji" />
+                    </label>
+                </div>
+
                 <div class="settings-actions">
                     <button class="ghost-button" type="button" @click="resetLastScore">Reset skor</button>
                     <button class="ghost-button danger" type="button" @click="resetCustomWords">Reset kotoba tambahan</button>
@@ -602,6 +619,16 @@ function finishKana() {
                             <span>Jumlah custom</span>
                             <input :value="customQuizCount" type="number" min="1" :max="maxQuizCount" inputmode="numeric" @input="setCustomQuizCount($event.target.value)" />
                             <small>Maksimum {{ maxQuizCount }} kotoba.</small>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <span>Bantuan</span>
+                        <label class="toggle-row compact">
+                            <span>
+                                <b>Tampilkan romaji</b>
+                                <small>{{ showRomaji ? 'Romaji muncul sebagai bantuan.' : 'Hanya kana/kanji yang ditampilkan.' }}</small>
+                            </span>
+                            <input type="checkbox" :checked="showRomaji" @change="toggleRomaji" />
                         </label>
                     </div>
                     <button class="primary-button wide" type="button" @click="startQuiz">Mulai latihan</button>
