@@ -580,6 +580,7 @@ input:focus {
 
 .nav-cta,
 .primary-link {
+    border: 0;
     background: var(--navy);
     color: #fff;
 }
@@ -1593,9 +1594,15 @@ input:focus {
 }
 
 @media (max-width: 760px) {
+    body {
+        background:
+            linear-gradient(180deg, rgba(255, 253, 248, .96), rgba(246, 241, 232, .96)),
+            var(--paper);
+    }
+
     .app-shell {
-        width: min(100% - 20px, 680px);
-        padding-top: 10px;
+        width: min(100% - 24px, 680px);
+        padding: 12px 0 28px;
     }
 
     .topbar,
@@ -1604,9 +1611,39 @@ input:focus {
         display: grid;
     }
 
+    .topbar {
+        gap: 16px;
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .topbar h1,
+    .kana-topbar h1 {
+        font-size: clamp(34px, 12vw, 48px);
+    }
+
     .workspace {
         grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 12px;
         padding: 10px;
+    }
+
+    .panel,
+    .quiz-board,
+    .quiz-card,
+    .result-card {
+        padding: 14px;
+    }
+
+    .standalone-quiz,
+    .quiz-board,
+    .empty-quiz {
+        min-height: auto;
+    }
+
+    .empty-quiz {
+        padding: 28px 16px;
     }
 
     .day-stamp {
@@ -1616,9 +1653,23 @@ input:focus {
 
     .trainer-actions {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+    }
+
+    .trainer-actions > *,
+    .trainer-actions button,
+    .trainer-actions .primary-link {
+        width: 100%;
+    }
+
+    .trainer-actions .day-stamp {
+        grid-column: 1 / -1;
     }
 
     .word-list {
+        grid-template-columns: 1fr;
         max-height: none;
         padding-right: 0;
     }
@@ -1628,8 +1679,8 @@ input:focus {
     }
 
     .landing-shell {
-        width: min(100% - 20px, 680px);
-        padding-top: 10px;
+        width: min(100% - 24px, 680px);
+        padding: 10px 0 30px;
     }
 
     .landing-nav,
@@ -1649,26 +1700,136 @@ input:focus {
 
     .landing-nav {
         display: grid;
-        position: static;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        position: sticky;
+        top: 8px;
+        min-height: auto;
+        padding: 10px;
+        border-radius: 8px;
     }
 
-    .landing-links,
+    .landing-links {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        width: 100%;
+    }
+
     .hero-actions {
         display: grid;
+        gap: 8px;
     }
 
-    .landing-links a {
+    .landing-links a,
+    .landing-links button {
         width: 100%;
+        min-height: 38px;
+        padding: 0 8px;
+        font-size: 14px;
+    }
+
+    .landing-links .nav-cta {
+        grid-column: span 2;
     }
 
     .brand-mark {
         justify-content: start;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .brand-mark span {
+        width: 38px;
+        height: 38px;
+        font-size: 22px;
+    }
+
+    .brand-mark strong {
+        overflow: hidden;
+        font-size: 17px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .landing-hero {
         min-height: auto;
-        gap: 22px;
-        padding-top: 24px;
+        gap: 18px;
+        padding: 28px 0 24px;
+    }
+
+    .hero-copy h1 {
+        margin-bottom: 16px;
+        font-size: clamp(48px, 18vw, 72px);
+    }
+
+    .hero-lead {
+        margin-bottom: 20px;
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    .primary-link,
+    .secondary-link {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .study-sheet {
+        gap: 9px;
+        padding: 12px;
+    }
+
+    .study-sheet::before {
+        display: none;
+    }
+
+    .sheet-row,
+    .sheet-header {
+        padding: 10px 12px;
+    }
+
+    .sheet-row span {
+        font-size: 23px;
+    }
+
+    .landing-band {
+        gap: 10px;
+    }
+
+    .landing-band article,
+    .landing-note,
+    .landing-split,
+    .showcase-card,
+    .feature-ledger {
+        box-shadow: 0 12px 32px rgba(46, 37, 25, .09);
+    }
+
+    .landing-band article {
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .landing-note,
+    .landing-split {
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .routine-table div,
+    .ledger-row {
+        gap: 5px;
+        padding: 12px;
+    }
+
+    .landing-footer {
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .landing-footer button {
+        width: 100%;
+        min-height: 44px;
     }
 
     .study-sheet {
@@ -1677,25 +1838,50 @@ input:focus {
     }
 
     .kana-shell {
-        width: min(100% - 20px, 680px);
-        padding-top: 10px;
+        width: min(100% - 24px, 680px);
+        padding: 12px 0 28px;
     }
 
     .kana-topbar {
         display: grid;
+        gap: 14px;
+        padding: 16px;
     }
 
     .kana-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         justify-content: start;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .kana-actions > * {
+        width: 100%;
+    }
+
+    #kana-timer {
+        grid-column: 1 / -1;
     }
 
     .kana-grid {
-        grid-template-columns: repeat(auto-fill, minmax(138px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
     }
 
     .kana-card {
-        min-height: 188px;
+        min-height: 168px;
+        padding: 16px 10px 14px;
+    }
+
+    .kana-card strong {
+        font-size: clamp(52px, 18vw, 78px);
+    }
+
+    .kana-card input {
+        min-height: 52px;
+        margin-top: 16px;
+        font-size: 24px;
     }
 
     .kana-stat-grid {
@@ -1704,5 +1890,34 @@ input:focus {
 
     .kana-modal-panel {
         padding: 22px 16px 16px;
+    }
+}
+
+@media (max-width: 420px) {
+    .landing-shell,
+    .app-shell,
+    .kana-shell {
+        width: min(100% - 18px, 680px);
+    }
+
+    .landing-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .landing-links .nav-cta {
+        grid-column: 1 / -1;
+    }
+
+    .trainer-actions,
+    .kana-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .kana-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .count-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
