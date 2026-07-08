@@ -381,16 +381,15 @@ function finishKana() {
     </main>
 
     <main v-else-if="page === 'materi'" class="app-shell">
-        <header class="topbar">
+        <header class="topbar page-hero page-hero-material">
             <div>
                 <p class="eyebrow">N5 daily kotoba</p>
                 <h1>Materi Kotoba</h1>
+                <p class="page-hero-copy">Baca ulang bank kosakata, tambah catatan pribadi, lalu lanjutkan ke kuis saat sudah siap.</p>
             </div>
-            <div class="trainer-actions">
-                <button class="ghost-button" type="button" @click="go('landing')">Landing</button>
-                <button class="ghost-button" type="button" @click="go('kana')">Kana</button>
-                <button class="primary-link compact-link" type="button" @click="go('latihan')">Mulai latihan</button>
+            <div class="page-hero-side">
                 <div class="day-stamp"><span>Local</span><strong>{{ words.length }}</strong><small>kata tersimpan</small></div>
+                <button class="primary-button" type="button" @click="go('latihan')">Mulai kuis</button>
             </div>
         </header>
 
@@ -445,12 +444,19 @@ function finishKana() {
     </main>
 
     <main v-else-if="page === 'latihan'" class="app-shell">
-        <header class="topbar">
-            <div><p class="eyebrow">N5 quiz room</p><h1>Latihan Kotoba</h1></div>
-            <div class="trainer-actions">
-                <button class="ghost-button" type="button" @click="go('landing')">Landing</button>
-                <button class="ghost-button" type="button" @click="go('materi')">Materi</button>
-                <button class="ghost-button" type="button" @click="go('kana')">Kana</button>
+        <header class="topbar page-hero page-hero-quiz">
+            <div>
+                <p class="eyebrow">N5 quiz room</p>
+                <h1>Latihan Kotoba</h1>
+                <p class="page-hero-copy">Pilih arah soal dan jumlah pertanyaan. Daftar jawaban disembunyikan agar latihan benar-benar dari ingatan.</p>
+            </div>
+            <div class="page-hero-side">
+                <div class="day-stamp">
+                    <span>Bank aktif</span>
+                    <strong>{{ words.length }}</strong>
+                    <small>kotoba</small>
+                </div>
+                <button class="secondary-link" type="button" @click="go('materi')">Review materi</button>
             </div>
         </header>
 
@@ -536,16 +542,15 @@ function finishKana() {
     </main>
 
     <main v-else-if="page === 'kana'" class="app-shell">
-        <header class="topbar kana-choice-topbar">
+        <header class="topbar kana-choice-topbar page-hero page-hero-kana">
             <div>
                 <p class="eyebrow">Kana room</p>
                 <h1>Latihan Kana</h1>
-                <p>Mulai dari set yang ingin kamu tajamkan hari ini, lalu jawab romaji secepat dan sebersih mungkin.</p>
+                <p class="page-hero-copy">Mulai dari set yang ingin kamu tajamkan hari ini, lalu jawab romaji secepat dan sebersih mungkin.</p>
             </div>
-            <div class="trainer-actions">
-                <button class="ghost-button" type="button" @click="go('landing')">Landing</button>
-                <button class="ghost-button" type="button" @click="go('materi')">Materi</button>
-                <button class="ghost-button" type="button" @click="go('latihan')">Kotoba</button>
+            <div class="page-hero-side kana-hero-preview">
+                <strong>あ ア</strong>
+                <span>46 + 46 huruf dasar</span>
             </div>
         </header>
 
@@ -571,17 +576,16 @@ function finishKana() {
     </main>
 
     <main v-else class="kana-shell kana-quiz-shell">
-        <header class="kana-topbar">
+        <header class="kana-topbar page-hero page-hero-kana">
             <div>
                 <p class="eyebrow">46 basic {{ kanaState.script }}</p>
                 <h1>{{ kanaState.script }}</h1>
-                <p>Isi romaji, tekan Enter, dan lanjutkan sampai semua kartu selesai.</p>
+                <p class="page-hero-copy">Isi romaji, tekan Enter, dan lanjutkan sampai semua kartu selesai.</p>
             </div>
             <div class="kana-actions">
                 <span id="kana-timer">{{ kanaState.elapsed }}</span>
                 <button class="ghost-button" type="button" @click="resetKana(kanaState.script)">Ulang</button>
-                <button class="ghost-button" type="button" @click="go('kana')">Pilih kana</button>
-                <button class="ghost-button" type="button" @click="go('landing')">Landing</button>
+                <button class="ghost-button" type="button" @click="go('kana')">Pilih set</button>
             </div>
         </header>
 

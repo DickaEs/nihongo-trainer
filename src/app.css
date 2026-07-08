@@ -1450,6 +1450,7 @@ input:focus {
 .app-shell,
 .kana-shell {
     width: min(1180px, calc(100% - 32px));
+    padding-bottom: 112px;
 }
 
 .topbar,
@@ -1536,8 +1537,130 @@ input:focus {
     min-height: 190px;
 }
 
+.page-hero {
+    position: relative;
+    overflow: hidden;
+    align-items: stretch;
+    min-height: 230px;
+    padding: 28px;
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .96), rgba(230, 240, 247, .84)),
+        #fffefa;
+}
+
+.page-hero::before {
+    position: absolute;
+    inset: auto -34px -48px auto;
+    color: rgba(23, 50, 77, .055);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(92px, 17vw, 220px);
+    font-weight: 900;
+    line-height: .8;
+    pointer-events: none;
+}
+
+.page-hero-material::before {
+    content: "単語";
+}
+
+.page-hero-quiz::before {
+    content: "問";
+}
+
+.page-hero-kana::before {
+    content: "かな";
+}
+
+.page-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.page-hero-copy {
+    max-width: 680px;
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.55;
+}
+
+.page-hero-side {
+    display: grid;
+    gap: 12px;
+    align-content: center;
+    justify-items: end;
+    min-width: 210px;
+}
+
+.page-hero-side .primary-button,
+.page-hero-side .secondary-link {
+    width: 100%;
+}
+
+.kana-hero-preview {
+    justify-items: center;
+    padding: 20px;
+    border: 1px solid #d8d1c6;
+    border-radius: 8px;
+    background: rgba(255, 253, 248, .76);
+}
+
+.kana-hero-preview strong {
+    color: var(--navy);
+    font-size: 58px;
+    line-height: 1;
+}
+
+.kana-hero-preview span {
+    color: var(--muted);
+    font-weight: 900;
+}
+
 .page-bottom-nav {
-    display: none;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: min(680px, calc(100% - 28px));
+    margin: 0 auto;
+    padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+    border: 1px solid #d8d1c6;
+    border-bottom: 0;
+    border-radius: 24px 24px 0 0;
+    background: rgba(255, 253, 248, .97);
+    box-shadow: 0 -18px 40px rgba(46, 37, 25, .14);
+    backdrop-filter: blur(18px);
+}
+
+.page-bottom-nav button {
+    display: grid;
+    gap: 4px;
+    min-height: 58px;
+    place-items: center;
+    border: 0;
+    border-radius: 17px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 900;
+}
+
+.page-bottom-nav span {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.page-bottom-nav small {
+    font-weight: 900;
+}
+
+.page-bottom-nav .is-active {
+    background: var(--sky);
+    color: var(--navy);
 }
 
 .auth-shell {
