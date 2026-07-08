@@ -1280,6 +1280,266 @@ input:focus {
     background: rgba(255, 255, 255, .08);
 }
 
+/* Light app redesign */
+.app-home {
+    width: min(1180px, calc(100% - 32px));
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 18px 0 96px;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(216, 163, 53, .16), transparent 34%),
+        radial-gradient(circle at 100% 12%, rgba(49, 93, 136, .13), transparent 34%),
+        var(--paper);
+    color: var(--ink);
+}
+
+.home-topbar {
+    margin-bottom: 18px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 253, 248, .9);
+    box-shadow: 0 16px 42px rgba(46, 37, 25, .1);
+}
+
+.home-logo,
+.home-top-actions button {
+    border-color: #d7d0c4;
+    background: #fffefa;
+    color: var(--navy);
+    box-shadow: none;
+}
+
+.home-logo {
+    border-radius: 8px;
+}
+
+.home-logo span {
+    border-radius: 7px;
+    background: var(--navy);
+    color: #fff;
+}
+
+.home-top-actions button {
+    border-radius: 8px;
+}
+
+.home-hero-card {
+    min-height: 290px;
+    border-color: #d6cfc3;
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(230, 240, 247, .92)),
+        #fffefa;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+}
+
+.home-hero-card::before {
+    color: rgba(23, 50, 77, .06);
+}
+
+.home-hero-card p {
+    color: var(--red);
+    font-size: clamp(15px, 2vw, 18px);
+    text-transform: uppercase;
+}
+
+.home-hero-card h1 {
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+.home-hero-card span {
+    color: var(--muted);
+}
+
+.home-session-pill {
+    border-color: #b9c8d8;
+    border-radius: 8px;
+    background: var(--navy);
+    color: #fff;
+    box-shadow: none;
+}
+
+.home-stats button,
+.home-quiz-card {
+    border-color: #d8d1c6;
+    color: var(--ink);
+    box-shadow: 0 18px 42px rgba(46, 37, 25, .09);
+}
+
+.home-stats button {
+    border-radius: 8px;
+    background: #fffefa;
+}
+
+.home-stats strong {
+    color: var(--navy);
+}
+
+.home-stats small,
+.home-quiz-card small,
+.home-bottom-nav small {
+    color: var(--muted);
+}
+
+.home-section-title strong {
+    color: var(--ink);
+}
+
+.home-section-title span {
+    background: #d8d1c6;
+}
+
+.home-quiz-card {
+    border-radius: 8px;
+}
+
+.home-quiz-card.purple {
+    background: #f3efe6;
+    border-color: #d8d1c6;
+}
+
+.home-quiz-card.amber {
+    background: #fff4dc;
+    border-color: #e2c684;
+}
+
+.home-quiz-card.blue {
+    background: var(--sky);
+    border-color: #b9c8d8;
+}
+
+.home-quiz-card.green {
+    background: var(--mint);
+    border-color: #b6d6c4;
+}
+
+.home-mini-panel {
+    border-color: var(--line);
+    border-radius: 8px;
+    background: #fffefa;
+    box-shadow: var(--shadow);
+}
+
+.home-mini-panel h2 {
+    color: var(--ink);
+}
+
+.home-mini-panel .primary-button {
+    background: var(--ink);
+    color: #fff;
+}
+
+.home-bottom-nav {
+    border-color: #d8d1c6;
+    background: rgba(255, 253, 248, .96);
+    box-shadow: 0 -18px 40px rgba(46, 37, 25, .13);
+}
+
+.home-bottom-nav button {
+    color: var(--muted);
+}
+
+.home-bottom-nav button.is-active {
+    background: var(--sky);
+    color: var(--navy);
+}
+
+.app-shell,
+.kana-shell {
+    width: min(1180px, calc(100% - 32px));
+}
+
+.topbar,
+.kana-topbar {
+    min-height: auto;
+    padding: 18px;
+}
+
+.topbar h1,
+.kana-topbar h1 {
+    font-size: clamp(36px, 5vw, 58px);
+}
+
+.trainer-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.workspace {
+    grid-template-columns: 300px minmax(0, 1fr);
+    align-items: start;
+    padding: 12px;
+}
+
+.material-workspace,
+.practice-workspace {
+    grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.panel {
+    padding: 16px;
+}
+
+.panel-heading {
+    display: grid;
+    align-items: start;
+}
+
+.panel-heading h2 {
+    font-size: 23px;
+}
+
+.quiz-board {
+    min-height: 480px;
+}
+
+.standalone-quiz {
+    min-height: 480px;
+}
+
+.empty-quiz {
+    min-height: 440px;
+    background: #fffefa;
+}
+
+.quiz-card,
+.result-card {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.chapter-strip {
+    margin-bottom: 12px;
+}
+
+.word-list {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    max-height: none;
+    overflow: visible;
+}
+
+.kana-choice-card {
+    min-height: 300px;
+    border-color: #d8d1c6;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.kana-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.kana-card {
+    min-height: 190px;
+}
+
+.page-bottom-nav {
+    display: none;
+}
+
 .auth-shell {
     display: grid;
     align-content: center;
@@ -1908,7 +2168,7 @@ input:focus {
 
     .app-shell {
         width: min(100% - 24px, 680px);
-        padding: 12px 0 28px;
+        padding: 12px 0 92px;
     }
 
     .topbar,
@@ -2256,7 +2516,7 @@ input:focus {
 
     .kana-shell {
         width: min(100% - 24px, 680px);
-        padding: 12px 0 28px;
+        padding: 12px 0 92px;
     }
 
     .kana-topbar {
@@ -2307,6 +2567,51 @@ input:focus {
 
     .kana-modal-panel {
         padding: 22px 16px 16px;
+    }
+
+    .page-bottom-nav {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 30;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+        border: 1px solid #d8d1c6;
+        border-bottom: 0;
+        border-radius: 22px 22px 0 0;
+        background: rgba(255, 253, 248, .97);
+        box-shadow: 0 -18px 40px rgba(46, 37, 25, .14);
+        backdrop-filter: blur(18px);
+    }
+
+    .page-bottom-nav button {
+        display: grid;
+        gap: 3px;
+        min-height: 52px;
+        place-items: center;
+        border: 0;
+        border-radius: 15px;
+        background: transparent;
+        color: var(--muted);
+        font-weight: 900;
+    }
+
+    .page-bottom-nav span {
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .page-bottom-nav small {
+        font-weight: 900;
+    }
+
+    .page-bottom-nav .is-active {
+        background: var(--sky);
+        color: var(--navy);
     }
 }
 

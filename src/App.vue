@@ -435,6 +435,13 @@ function finishKana() {
                 </div>
             </section>
         </section>
+
+        <nav class="page-bottom-nav" aria-label="Navigasi utama">
+            <button type="button" @click="go('landing')"><span>🏠</span><small>Home</small></button>
+            <button class="is-active" type="button" @click="go('materi')"><span>📚</span><small>Materi</small></button>
+            <button type="button" @click="go('kana')"><span>あ</span><small>Kana</small></button>
+            <button type="button" @click="go('latihan')"><span>🎯</span><small>Kuis</small></button>
+        </nav>
     </main>
 
     <main v-else-if="page === 'latihan'" class="app-shell">
@@ -519,6 +526,13 @@ function finishKana() {
                 </article>
             </section>
         </section>
+
+        <nav class="page-bottom-nav" aria-label="Navigasi utama">
+            <button type="button" @click="go('landing')"><span>🏠</span><small>Home</small></button>
+            <button type="button" @click="go('materi')"><span>📚</span><small>Materi</small></button>
+            <button type="button" @click="go('kana')"><span>あ</span><small>Kana</small></button>
+            <button class="is-active" type="button" @click="go('latihan')"><span>🎯</span><small>Kuis</small></button>
+        </nav>
     </main>
 
     <main v-else-if="page === 'kana'" class="app-shell">
@@ -547,6 +561,13 @@ function finishKana() {
                 <small>Mulai latihan</small>
             </button>
         </section>
+
+        <nav class="page-bottom-nav" aria-label="Navigasi utama">
+            <button type="button" @click="go('landing')"><span>🏠</span><small>Home</small></button>
+            <button type="button" @click="go('materi')"><span>📚</span><small>Materi</small></button>
+            <button class="is-active" type="button" @click="go('kana')"><span>あ</span><small>Kana</small></button>
+            <button type="button" @click="go('latihan')"><span>🎯</span><small>Kuis</small></button>
+        </nav>
     </main>
 
     <main v-else class="kana-shell kana-quiz-shell">
@@ -610,5 +631,12 @@ function finishKana() {
                 </div>
             </section>
         </div>
+
+        <nav class="page-bottom-nav" aria-label="Navigasi utama">
+            <button type="button" @click="go('landing')"><span>🏠</span><small>Home</small></button>
+            <button type="button" @click="go('materi')"><span>📚</span><small>Materi</small></button>
+            <button class="is-active" type="button" @click="go('kana')"><span>あ</span><small>Kana</small></button>
+            <button type="button" @click="go('latihan')"><span>🎯</span><small>Kuis</small></button>
+        </nav>
     </main>
 </template>
