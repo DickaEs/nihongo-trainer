@@ -34,7 +34,7 @@
         <section class="landing-hero">
             <div class="hero-copy reveal-item">
                 <p class="eyebrow">N5 kotoba practice</p>
-                <h1>Nihongo Trainerrrrrrrr</h1>
+                <h1>Nihongo Trainer</h1>
                 <p class="hero-lead">
                     Mulai dari kosakata Minna no Nihongo bab 1, tambah kata versi kamu, lalu latihan di ruang terpisah supaya jawaban tidak kelihatan saat mengerjakan.
                 </p>
