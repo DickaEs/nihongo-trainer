@@ -193,6 +193,55 @@ h2 {
     gap: 12px;
 }
 
+.chapter-select {
+    display: grid;
+    gap: 8px;
+}
+
+.chapter-select select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 1px solid #cec7bb;
+    border-radius: 7px;
+    background: #fffdfa;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 900;
+}
+
+.chapter-select select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(49, 93, 136, .14);
+    outline: none;
+}
+
+.chapter-summary {
+    display: grid;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid #ded7ca;
+    border-radius: 8px;
+    background: #fff8e6;
+}
+
+.chapter-summary strong {
+    color: var(--navy);
+    font-size: 24px;
+}
+
+.chapter-summary span {
+    color: var(--ink);
+    font-weight: 900;
+}
+
+.chapter-summary small {
+    color: var(--muted);
+    font-weight: 800;
+    line-height: 1.45;
+}
+
 label {
     display: grid;
     gap: 6px;
@@ -1693,6 +1742,7 @@ body.theme-dark .ghost-button,
 body.theme-dark .segmented button,
 body.theme-dark .count-grid button,
 body.theme-dark .chapter-strip button,
+body.theme-dark .chapter-select select,
 body.theme-dark input,
 body.theme-dark .option-button,
 body.theme-dark .settings-close {
@@ -1724,7 +1774,8 @@ body.theme-dark .kana-wrong-list,
 body.theme-dark .review-item,
 body.theme-dark .prompt,
 body.theme-dark .custom-count-field,
-body.theme-dark .toggle-row {
+body.theme-dark .toggle-row,
+body.theme-dark .chapter-summary {
     border-color: var(--line);
     background: #151922;
     color: var(--ink);

@@ -2,16 +2,13 @@
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { defaultKotoba, kanaSets } from './data';
 
-const storageKey = 'nihongo-trainer-custom-kotoba';
 const scoreKey = 'nihongo-trainer-last-score';
 const preferencesKey = 'nihongo-trainer-preferences';
 const routes = ['landing', 'materi', 'latihan', 'kana', 'hiragana', 'katakana'];
 const savedPreferences = loadJson(preferencesKey, {});
 
 const page = ref('landing');
-const customWords = ref(loadCustomWords());
-const form = reactive({ romaji: '', kana: '', kanji: '', meaning: '' });
-const formNote = ref('');
+const selectedChapter = ref(Number(savedPreferences.selectedChapter ?? 1));
 const shuffledPreview = ref(false);
 const quizMode = ref(savedPreferences.quizMode ?? 'jp-id');
 const quizCount = ref(savedPreferences.quizCount ?? 'all');
@@ -33,9 +30,14 @@ const kanaState = reactive({
 
 let timer = null;
 
-const words = computed(() => [...defaultKotoba, ...customWords.value].sort((a, b) => a.romaji.localeCompare(b.romaji)));
-const maxQuizCount = computed(() => Math.max(1, words.value.length));
+const chapters = Array.from({ length: 50 }, (_, index) => index + 1);
+const allWords = computed(() => defaultKotoba.map((word) => ({ ...word, chapter: word.chapter ?? 1 })));
+const words = computed(() => allWords.value
+    .filter((word) => word.chapter === selectedChapter.value)
+    .sort((a, b) => a.romaji.localeCompare(b.romaji)));
+const maxQuizCount = computed(() => words.value.length);
 const visibleWords = computed(() => (shuffledPreview.value ? shuffle(words.value) : words.value));
+const selectedChapterLabel = computed(() => `Bab ${selectedChapter.value}`);
 const currentQuestion = computed(() => quiz.items[quiz.current]);
 const quizCorrect = computed(() => quiz.answers.filter((answer) => answer.correct).length);
 const quizPercent = computed(() => (quiz.items.length ? Math.round((quizCorrect.value / quiz.items.length) * 100) : 0));
@@ -63,9 +65,11 @@ watch(page, (value) => {
     }
 });
 
-watch([quizMode, quizCount, customQuizCount, showRomaji, theme], savePreferences);
+watch([selectedChapter, quizMode, quizCount, customQuizCount, showRomaji, theme], savePreferences);
 watch(words, () => {
     customQuizCount.value = clampQuizCount(customQuizCount.value);
+    quiz.items = [];
+    quiz.finished = false;
 });
 
 onMounted(() => {
@@ -98,20 +102,13 @@ function loadJson(key, fallback) {
     }
 }
 
-function loadCustomWords() {
-    return loadJson(storageKey, []);
-}
-
-function saveCustomWords() {
-    localStorage.setItem(storageKey, JSON.stringify(customWords.value));
-}
-
 function savePreferences() {
     localStorage.setItem(preferencesKey, JSON.stringify({
         quizMode: quizMode.value,
         quizCount: quizCount.value,
         customQuizCount: customQuizCount.value,
         showRomaji: showRomaji.value,
+        selectedChapter: selectedChapter.value,
         theme: theme.value,
     }));
     applyTheme();
@@ -135,6 +132,7 @@ function setQuizCount(value) {
 }
 
 function clampQuizCount(value) {
+    if (maxQuizCount.value === 0) return 0;
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) return 1;
     return Math.min(Math.max(1, Math.floor(parsed)), maxQuizCount.value);
@@ -155,37 +153,9 @@ function resolvedQuizCount() {
     return Number(quizCount.value);
 }
 
-function resetCustomWords() {
-    customWords.value = [];
-    localStorage.removeItem(storageKey);
-    formNote.value = 'Kotoba tambahan sudah direset.';
-}
-
 function resetLastScore() {
     lastScore.value = null;
     localStorage.removeItem(scoreKey);
-}
-
-function addKotoba() {
-    const payload = Object.fromEntries(Object.entries(form).map(([key, value]) => [key, String(value).trim()]));
-
-    if (!payload.romaji || !payload.kana || !payload.meaning) {
-        formNote.value = 'Romaji, kana, dan arti wajib diisi.';
-        return;
-    }
-
-    customWords.value = [
-        ...customWords.value,
-        {
-            id: Date.now(),
-            ...payload,
-            kanji: payload.kanji || '',
-            is_default: false,
-        },
-    ];
-    saveCustomWords();
-    Object.assign(form, { romaji: '', kana: '', kanji: '', meaning: '' });
-    formNote.value = 'Tersimpan di browser ini. Kotoba sudah masuk daftar latihan.';
 }
 
 function shuffle(items) {
@@ -435,7 +405,7 @@ function finishKana() {
 
                 <div class="settings-actions">
                     <button class="ghost-button" type="button" @click="resetLastScore">Reset skor</button>
-                    <button class="ghost-button danger" type="button" @click="resetCustomWords">Reset kotoba tambahan</button>
+                    <button class="ghost-button" type="button" @click="selectedChapter = 1">Pakai Bab 1</button>
                 </div>
             </section>
         </div>
@@ -524,28 +494,31 @@ function finishKana() {
             <div>
                 <p class="eyebrow">N5 daily kotoba</p>
                 <h1>Materi Kotoba</h1>
-                <p class="page-hero-copy">Baca ulang bank kosakata, tambah catatan pribadi, lalu lanjutkan ke kuis saat sudah siap.</p>
+                <p class="page-hero-copy">Baca ulang bank kosakata per bab, lalu lanjutkan ke kuis saat sudah siap.</p>
             </div>
             <div class="page-hero-side">
-                <div class="day-stamp"><span>Local</span><strong>{{ words.length }}</strong><small>kata tersimpan</small></div>
+                <div class="day-stamp"><span>{{ selectedChapterLabel }}</span><strong>{{ words.length }}</strong><small>kata tersedia</small></div>
                 <button class="primary-button" type="button" @click="go('latihan')">Mulai kuis</button>
             </div>
         </header>
 
         <section class="workspace material-workspace">
             <aside class="left-rail">
-                <section class="panel add-panel">
-                    <div class="panel-heading"><p class="eyebrow">Tambah kotoba</p><h2>Catatan baru</h2></div>
-                    <form class="kotoba-form" @submit.prevent="addKotoba">
-                        <label><span>Romaji</span><input v-model="form.romaji" autocomplete="off" placeholder="watashi" required /></label>
-                        <label><span>Hiragana / katakana</span><input v-model="form.kana" autocomplete="off" placeholder="わたし" required /></label>
-                        <label><span>Kanji</span><input v-model="form.kanji" autocomplete="off" placeholder="私" /></label>
-                        <label><span>Arti Indonesia</span><input v-model="form.meaning" autocomplete="off" placeholder="Saya" required /></label>
-                        <button class="primary-button" type="submit">Simpan kotoba</button>
-                        <p class="form-note" aria-live="polite">{{ formNote }}</p>
-                    </form>
+                <section class="panel filter-panel">
+                    <div class="panel-heading"><p class="eyebrow">Filter kotoba</p><h2>Pilih bab</h2></div>
+                    <label class="chapter-select">
+                        <span>Minna no Nihongo</span>
+                        <select v-model.number="selectedChapter">
+                            <option v-for="chapter in chapters" :key="chapter" :value="chapter">Bab {{ chapter }}</option>
+                        </select>
+                    </label>
+                    <div class="chapter-summary">
+                        <strong>{{ selectedChapterLabel }}</strong>
+                        <span>{{ words.length }} kotoba tersedia</span>
+                        <small v-if="words.length === 0">Data bab ini belum diisi. Update kotoba dilakukan manual di kode.</small>
+                        <small v-else>Saat ini data yang tersedia baru Bab 1.</small>
+                    </div>
                 </section>
-
                 <section class="panel drill-panel">
                     <div class="panel-heading"><p class="eyebrow">Ruang latihan</p><h2>Terpisah dari materi</h2></div>
                     <p class="panel-copy">Latihan dibuka di halaman berbeda supaya daftar arti tidak terlihat saat menjawab.</p>
@@ -556,11 +529,16 @@ function finishKana() {
 
             <section class="main-board">
                 <div class="chapter-strip">
-                    <div><p class="eyebrow">Minna no Nihongo Bab 1</p><h2>Bank materi kotoba</h2></div>
+                    <div><p class="eyebrow">Minna no Nihongo {{ selectedChapterLabel }}</p><h2>Bank materi kotoba</h2></div>
                     <button type="button" @click="shuffledPreview = !shuffledPreview">Acak tampilan</button>
                 </div>
 
                 <div class="word-list" aria-live="polite">
+                    <div v-if="visibleWords.length === 0" class="empty-quiz material-empty">
+                        <p class="eyebrow">Belum ada data</p>
+                        <h2>{{ selectedChapterLabel }} belum punya kotoba.</h2>
+                        <p>Untuk sekarang, bank kotoba baru tersedia di Bab 1.</p>
+                    </div>
                     <article v-for="word in visibleWords" :key="word.id" class="word-card" :class="{ custom: !word.is_default }">
                         <p class="kana">{{ word.kana }}</p>
                         <p class="romaji">{{ word.romaji }}</p>
@@ -591,9 +569,9 @@ function finishKana() {
             </div>
             <div class="page-hero-side">
                 <div class="day-stamp">
-                    <span>Bank aktif</span>
+                    <span>{{ selectedChapterLabel }}</span>
                     <strong>{{ words.length }}</strong>
-                    <small>kotoba</small>
+                    <small>kotoba aktif</small>
                 </div>
                 <button class="secondary-link" type="button" @click="go('materi')">Review materi</button>
             </div>
@@ -638,15 +616,15 @@ function finishKana() {
                 <section class="panel quiet-panel">
                     <p class="eyebrow">Bank aktif</p>
                     <h2>{{ words.length }} kotoba</h2>
-                    <p class="panel-copy">Daftar kata disembunyikan di halaman ini. Kalau ingin melihat materi lagi, kembali ke halaman Materi.</p>
+                    <p class="panel-copy">{{ words.length ? `${selectedChapterLabel} sedang dipakai untuk kuis.` : `${selectedChapterLabel} belum punya data. Pilih Bab 1 untuk latihan saat ini.` }}</p>
                 </section>
             </aside>
 
             <section class="quiz-board standalone-quiz" aria-live="polite">
                 <div v-if="!quiz.items.length" class="empty-quiz">
                     <p class="eyebrow">Siap latihan</p>
-                    <h2>Pilih jumlah soal, lalu mulai.</h2>
-                    <p>Jawaban dibuat pilihan ganda dari kotoba lain agar latihan tidak terlalu mudah ditebak.</p>
+                    <h2>{{ words.length ? 'Pilih jumlah soal, lalu mulai.' : `${selectedChapterLabel} belum punya kotoba.` }}</h2>
+                    <p>{{ words.length ? 'Jawaban dibuat pilihan ganda dari kotoba lain agar latihan tidak terlalu mudah ditebak.' : 'Untuk saat ini, pilih Bab 1 di halaman Materi karena data bab lain belum diisi.' }}</p>
                 </div>
 
                 <article v-else-if="quiz.finished" class="result-card">
